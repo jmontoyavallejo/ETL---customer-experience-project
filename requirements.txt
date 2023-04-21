@@ -1,0 +1,12 @@
+uvicorn[standard] 
+fastapi 
+numpy 
+pandas 
+scikit-learn
+opencv-python 
+scipy 
+keras 
+tensorflow 
+matplotlib 
+psycopg2
+ipykernel
