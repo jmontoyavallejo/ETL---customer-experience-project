@@ -12,3 +12,4 @@ psycopg2
 ipykernel
 pandas_gbq
 google
+openpyxl

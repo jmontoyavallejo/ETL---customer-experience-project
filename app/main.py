@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from fastapi.responses import FileResponse,HTMLResponse
-
+from fastapi.responses import HTMLResponse
+from modules.Extraction import full_extraction
 app = FastAPI()
 
 
@@ -14,3 +14,9 @@ def read_root():
     </div>
     </html>
     '''
+
+
+@app.get("/extraction")
+def extraction():
+    full_extraction()
+    return "Raw Table's upload complete"
