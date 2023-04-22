@@ -4,7 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-uvicorn = {extras = ["standard"], version = "*"}
 fastapi = "*"
 numpy = "*"
 pandas = "*"
@@ -15,6 +14,10 @@ keras = "*"
 tensorflow = "*"
 matplotlib = "*"
 psycopg2 = "*"
+uvicorn = {extras = ["standard"], version = "*"}
+ipykernel = "*"
+pandas-gbq = "*"
+google = "*"
 
 [dev-packages]
 ipykernel = "*"
