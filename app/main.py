@@ -1,8 +1,28 @@
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
-from modules.Extraction import full_extraction
-from modules.Tranformation import Big_query_executor
+from fastapi.middleware.cors import CORSMiddleware
+
+from app.modules.Extraction import full_extraction
+from app.modules.Tranformation import Big_query_executor
+
+
 app = FastAPI()
+
+
+origins = [
+    "http://localhost",
+    "http://localhost:3000",
+    "any https:// desired to fetch from the api",
+]
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/",response_class=HTMLResponse)
