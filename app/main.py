@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from modules.Extraction import full_extraction
+from modules.Tranformation import Big_query_executor
 app = FastAPI()
 
 
@@ -17,6 +18,38 @@ def read_root():
 
 
 @app.get("/extraction")
-def extraction():
+async def extraction():
     full_extraction()
     return "Raw Table's upload complete"
+
+@app.get("/tranformation")
+async def full_extraction():
+    
+    with open('app/SQL/Query_clientes_simplificado.sql') as file:
+        query_clientes_simplificado=file.read()
+    
+    with open('app/SQL/Query_contactable.sql') as file:
+        query_contactables=file.read()
+    
+    with open('app/SQL/Query_mineria_almacen.sql') as file:
+        query_mineria_almacen=file.read()
+    
+    with open('app/SQL/Query_mineria_campanas.sql') as file:
+        query_mineria_campanas=file.read()
+    
+    with open('app/SQL/Query_mineria_productos.sql') as file:
+        query_mineria_productos=file.read()
+    
+    with open('app/SQL/Query_mineria_ventas.sql') as file:
+        query_mineria_ventas=file.read()
+    
+    bq=Big_query_executor(project_name='customer-experience-384423')
+    
+    bq.execute_query(query_mineria_ventas)
+    bq.execute_query(query_clientes_simplificado)
+    bq.execute_query(query_contactables)
+    bq.execute_query(query_mineria_almacen)
+    bq.execute_query(query_mineria_campanas)
+    bq.execute_query(query_mineria_productos)
+
+    return "Transform Table's upload complete"

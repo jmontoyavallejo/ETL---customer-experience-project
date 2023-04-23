@@ -13,3 +13,6 @@ ipykernel
 pandas_gbq
 google
 openpyxl
+google-cloud-storage
+google-cloud-bigquery
+pytest
