@@ -18,8 +18,9 @@ end
 
 ## Visualization with QlinkSense
 
+Bigquery live conection with database
 
-`<img src="resources/qlink_conection.png" alt="qlink" title="qlink">`
+![Image Title](resources/qlink_conection.png)
 
 ## Installation
 
