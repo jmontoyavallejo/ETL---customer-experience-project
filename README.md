@@ -4,6 +4,24 @@ This is a repository for extracting customer experience insights and BI of a tex
 
 if you have comments or want to collaborate feel free to fork and make a PR :).
 
+
+
+
+
+```mermaid
+graph TB
+
+
+  subgraph "Costumer Experience Project "
+  Node1[EXTRACTION : python in api,gcp and postgresql] --> Node2[TRANSFORMATION : python and sql in bigquery]
+  Node2 --> Node3[LOAD : python and sql in bigquery]
+  Node3 --> Node4[VISUALIZATION : QLINK SENSE]
+ Node3 --> Node5[MACHINE LEARNING :  PYTHON ]
+end
+```
+
+
+
 ## Installation
 
 To use this repository, follow these steps:

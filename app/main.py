@@ -66,10 +66,10 @@ async def full_extraction():
     bq=Big_query_executor(project_name='customer-experience-384423')
     
     bq.execute_query(query_mineria_ventas)
-    bq.execute_query(query_clientes_simplificado)
     bq.execute_query(query_contactables)
     bq.execute_query(query_mineria_almacen)
     bq.execute_query(query_mineria_campanas)
     bq.execute_query(query_mineria_productos)
+    bq.execute_query(query_clientes_simplificado)
 
     return "Transform Table's upload complete"

@@ -13,9 +13,9 @@ WITH
   SELECT
     id_cliente,
     CASE
-      WHEN MAX(habeas_data_venta) = 'SI' AND (MAX(estado_celular_venta) = 'SI' OR MAX(estado_celular_venta) = 'SI' AND id_cliente NOT IN ( SELECT id FROM `customer-experience-384423.Data_cruda.blacklist` )) THEN 'SI'
+      WHEN MAX(habeas_data_venta) = 'SI' AND (MAX(estado_celular_venta) = 'SI' OR MAX(estado_celular_venta) = 'SI' AND id_cliente NOT IN ( SELECT id FROM `customer-experience-384423.Data_cruda.blacklist` )) THEN 1
     ELSE
-    'NO'
+    0
   END
     AS contactable
   FROM
