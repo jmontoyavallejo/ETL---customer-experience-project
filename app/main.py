@@ -31,7 +31,7 @@ def read_root():
     <div style="color: black;box-shadow: 8px 8px 5px #444;padding:5em;border: 1px solid #333;text-align: center;margin: auto;background-image: linear-gradient(180deg, #fff, #ddd 40%, #ccc);width: 20em;border: 1px solid #333;font-size: 23px;"> 
     Hello! welcome <br> to Juan Pablo's ETL customer experience postgresql repo, feel free to go to 
     <a href="http://localhost:8000/docs">Fastapi Docs</a>. 
-    so you can interact with the repository  
+    so you can interact with the repository, you must have access to the google cloud project server, send and email request for access,download google SDK and run this script: gcloud auth application-default login 
     </div>
     </html>
     '''
@@ -62,6 +62,9 @@ async def full_extraction():
     
     with open('app/SQL/Query_mineria_ventas.sql') as file:
         query_mineria_ventas=file.read()
+
+    with open('app/SQL/Query_blacklist.sql') as file:
+        query_blacklist=file.read()
     
     bq=Big_query_executor(project_name='customer-experience-384423')
     
@@ -70,6 +73,7 @@ async def full_extraction():
     bq.execute_query(query_mineria_almacen)
     bq.execute_query(query_mineria_campanas)
     bq.execute_query(query_mineria_productos)
+    bq.execute_query(query_blacklist)
     bq.execute_query(query_clientes_simplificado)
 
     return "Transform Table's upload complete"

@@ -110,6 +110,75 @@ def full_extraction():
 
     df_mineria_ventas_csv=download_csv_from_gcs('customer_experience_bucket', 'mineria_venta.csv','customer experience')
     df_mineria_resultado_campanas_csv=download_csv_from_gcs('customer_experience_bucket', 'mineria_venta.csv','customer experience')
+    df_mineria_ventas_csv=pd.read_csv('mineria_venta.csv',sep=';',dtype=str)
+    old_column_names=df_mineria_ventas_csv.columns.to_list()
+    new_column_names=['id_factura',
+    'fecha_larga',
+    'id_pdv',
+    'id_cliente',
+    'numero_factura',
+    'unidades',
+    'porcentaje_descuento',
+    'precio_full',
+    'porcentaje_iva',
+    'precio_antes_iva',
+    'precio_con_iva',
+    'formas_de_pago',
+    'id_referencia',
+    'promocion',
+    'habeas_data_venta',
+    'valor_descuento',
+    'costo_total',
+    'costo_unitario',
+    'id_vendedor',
+    'estado_id_venta',
+    'estado_celular_venta',
+    'estado_email_venta',
+    'fecha',
+    'consecutivo_trx',
+    'captura_de_datos_cel',
+    'captura_de_datos_celcorreo',
+    'captura_de_datos_completo',
+    'rango_ticket',
+    'ticket']
+    cambio_cols=dict(zip(old_column_names,new_column_names))
+    df_mineria_ventas_csv.rename(columns=cambio_cols,inplace=True)
+
+
+    df_mineria_resultado_campanas_csv=download_csv_from_gcs('customer_experience_bucket', 'mineria_venta.csv','customer experience')
+    old_column_names=df_mineria_resultado_campanas_csv.columns.to_list()
+    new_column_names=['id_factura',
+    'fecha_larga',
+    'id_pdv',
+    'id_cliente',
+    'numero_factura',
+    'unidades',
+    'porcentaje_descuento',
+    'precio_full',
+    'porcentaje_iva',
+    'precio_antes_iva',
+    'precio_con_iva',
+    'formas_de_pago',
+    'id_referencia',
+    'promocion',
+    'habeas_data_venta',
+    'valor_descuento',
+    'costo_total',
+    'costo_unitario',
+    'id_vendedor',
+    'estado_id_venta',
+    'estado_celular_venta',
+    'estado_email_venta',
+    'fecha',
+    'consecutivo_trx',
+    'captura_de_datos_cel',
+    'captura_de_datos_cel_correo',
+    'captura_de_datos_completo',
+    'rango_ticket',
+    'ticket',
+    ]
+    cambio_cols=dict(zip(old_column_names,new_column_names))
+    df_mineria_resultado_campanas_csv.rename(columns=cambio_cols,inplace=True)
     
 
     url="https://v1-api.lax.marketing/api/blacklist/downloadFile"

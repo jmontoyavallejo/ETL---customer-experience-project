@@ -4,10 +4,6 @@ This is a repository for extracting customer experience insights and BI of a tex
 
 if you have comments or want to collaborate feel free to fork and make a PR :).
 
-
-
-
-
 ```mermaid
 graph TB
 
@@ -20,7 +16,10 @@ graph TB
 end
 ```
 
+## Visualization with QlinkSense
 
+
+`<img src="resources/qlink_conection.png" alt="qlink" title="qlink">`
 
 ## Installation
 

@@ -6,20 +6,20 @@ WITH
     id_cliente,
     AVG(CAST (precio_antes_iva AS int64)) promedio_compra
   FROM
-    `customer-experience-384423.Data_cruda.test_ventas`
+    `customer-experience-384423.Data_refinada.prd_mineria_ventas`
   GROUP BY
     1 ),
   clientes_contactable AS (
   SELECT
     id_cliente,
     CASE
-      WHEN MAX(habeas_data_venta) = 'SI' AND (MAX(estado_celular_venta) = 'SI' OR MAX(estado_celular_venta) = 'SI' AND id_cliente NOT IN ( SELECT id FROM `customer-experience-384423.Data_cruda.blacklist` )) THEN 1
+      WHEN MAX(habeas_data_venta) = 'SI' AND (MAX(estado_celular_venta) = 'SI' OR MAX(estado_celular_venta) = 'SI' AND id_cliente NOT IN ( SELECT id FROM `customer-experience-384423.Data_refinada.prd_blacklist` )) THEN 1
     ELSE
     0
   END
     AS contactable
   FROM
-    `customer-experience-384423.Data_cruda.test_ventas`
+    `customer-experience-384423.Data_refinada.prd_mineria_ventas`
   GROUP BY
     id_cliente ),
   puntos_venta AS(
@@ -86,9 +86,9 @@ WITH
     END
       ) AS compro_en_LITTLE_MIC_ECUADOR
   FROM
-    `customer-experience-384423.Data_cruda.test_ventas` t1
+    `customer-experience-384423.Data_refinada.prd_mineria_ventas` t1
   LEFT JOIN
-    `customer-experience-384423.Data_cruda.mineria_almacen` t2
+    `customer-experience-384423.Data_refinada.prd_mineria_almacen` t2
   ON
     t1.id_pdv = t2.id_pvd
   GROUP BY
@@ -99,7 +99,7 @@ WITH
     MAX(CAST(fecha AS DATE)) AS ultima_fecha_compra,
     CAST(DATE_DIFF(CURRENT_DATE(), MAX(CAST(fecha AS DATE)), DAY)AS int64) AS dias_desde_ultima_compra
   FROM
-    `customer-experience-384423.Data_cruda.test_ventas`
+    `customer-experience-384423.Data_refinada.prd_mineria_ventas`
   GROUP BY
     id_cliente),historial_compras as(
       SELECT
@@ -153,9 +153,9 @@ WITH
   MAX(CASE      WHEN t2.tipo_de_prenda = 'PANTALON' THEN 1    ELSE    0  END    ) AS compro_objeto_PANTALON,
   MAX(CASE      WHEN t2.tipo_de_prenda = 'ACCESORIOS' THEN 1    ELSE    0  END    ) AS compro_objeto_ACCESORIOS
 FROM
-  `customer-experience-384423.Data_cruda.test_ventas` t1
+  `customer-experience-384423.Data_refinada.prd_mineria_ventas` t1
 LEFT JOIN
-  `customer-experience-384423.Data_cruda.mineria_producto` t2
+  `customer-experience-384423.Data_refinada.prd_mineria_productos` t2
 ON
   t1.id_referencia = t2.id_referencia
 GROUP BY
