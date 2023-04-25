@@ -16,11 +16,20 @@ graph TB
 end
 ```
 
+## Bigquery Datalake
+
 ## Visualization with QlinkSense
 
 Bigquery live conection with database
 
 ![Image Title](resources/qlink_conection.png)
+
+![Image Title](resources/qlink_clients.png)
+
+![Image Title](resources/qlink_sales.png)
+
+
+
 
 ## Installation
 
