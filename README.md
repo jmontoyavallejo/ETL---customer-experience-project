@@ -18,6 +18,9 @@ end
 
 ## Bigquery Datalake
 
+
+![Image Title](resources/bigquery_datalake.png)
+
 ## Visualization with QlinkSense
 
 Bigquery live conection with database
@@ -27,9 +30,6 @@ Bigquery live conection with database
 ![Image Title](resources/qlink_clients.png)
 
 ![Image Title](resources/qlink_sales.png)
-
-
-
 
 ## Installation
 

@@ -16,3 +16,4 @@ openpyxl
 google-cloud-storage
 google-cloud-bigquery
 pytest
+seaborn
