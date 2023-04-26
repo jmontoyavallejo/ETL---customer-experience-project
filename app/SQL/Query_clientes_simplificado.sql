@@ -245,7 +245,38 @@ LEFT JOIN
 ON
   t1.id_pdv = t2.id_pvd
 GROUP BY
-  t1.id_cliente)
+  t1.id_cliente),historial_compras_periodo as(
+    WITH
+  pivottable AS (
+  WITH
+    basepivot AS (
+    SELECT
+      id_cliente,
+      EXTRACT(YEAR
+      FROM
+        CAST(fecha AS date) ) periodo,
+      SUM(CAST(ticket AS float64)) promedio
+    FROM
+      `customer-experience-384423.Data_refinada.prd_mineria_ventas`
+    GROUP BY
+      1,
+      2 )
+  SELECT
+    *
+  FROM
+    basepivot PIVOT (SUM(promedio) FOR periodo IN(2018,
+        2019,
+        2020,
+        2021)))
+SELECT
+  id_cliente,
+  _2018 compras_2018,
+  _2019 compras_2019,
+  _2020 compras_2020,
+  _2021 compras_2021,
+FROM
+  pivottable
+  )
 SELECT
   t1.*,
   t2.contactable,
@@ -318,6 +349,10 @@ SELECT
   t6.compro_en_ZONA_7,
   t6.compro_en_ZONA_M,
   t6.compro_en_ECUADOR,
+  t7.compras_2018,
+  t7.compras_2019,
+  t7.compras_2020,
+  t7.compras_2021,
 FROM
   promedio AS t1
 INNER JOIN
@@ -340,3 +375,7 @@ INNER JOIN
   historial_zonas AS t6
 ON
   t1.id_cliente =t6.id_cliente
+INNER JOIN
+  historial_compras_periodo AS t7
+ON
+  t1.id_cliente =t7.id_cliente
