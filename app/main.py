@@ -77,3 +77,8 @@ async def full_extraction():
     bq.execute_query(query_clientes_simplificado)
 
     return "Transform Table's upload complete"
+
+
+@app.get("/model_prediction")
+async def model_prediction():
+    pass

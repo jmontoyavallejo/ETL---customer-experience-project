@@ -278,73 +278,94 @@ WITH
     _2020 compras_2020,
     _2021 compras_2021,
   FROM
-    pivottable ),historial_recencia as (
-      WITH
-  temporal AS (
-  SELECT
-    id_cliente,
-    CASE
-      WHEN rango_recencia IN('Menos de 1 mes', '2 a 3 meses', '1 a 2 meses', '1 a 3 meses', '1 A 3 MESES') THEN 'recencia_1_3_meses'
-      WHEN rango_recencia IN('3 a 6 meses',
-      '3 A 6 MESES',
-      '5 a 6 meses',
-      '4 a 5 meses',
-      '3 a 4 meses') THEN 'recencia_3_6_meses'
-      WHEN rango_recencia IN('7 A 9 MESES', '6 a 7 meses', '6 A 7 MESES') THEN 'recencia_6_9_meses'
-      WHEN rango_recencia IN('9 a 10 meses',
-      '10 A 12 MESES') THEN 'recencia_9_12_meses'
-      WHEN NULL THEN 'no_recencia'
-    ELSE
-    'recencia_1_o_mas_anos'
-  END
-    rango_recencia
-  FROM (
+    pivottable ),
+  historial_recencia AS (
+  WITH
+    temporal AS (
     SELECT
       id_cliente,
-      rango_recencia,
-      fecha_fin,
-      ROW_NUMBER() OVER (PARTITION BY id_cliente ORDER BY fecha_fin DESC) AS row_num
+      CASE
+        WHEN rango_recencia IN('Menos de 1 mes', '2 a 3 meses', '1 a 2 meses', '1 a 3 meses', '1 A 3 MESES') THEN 'recencia_1_3_meses'
+        WHEN rango_recencia IN('3 a 6 meses',
+        '3 A 6 MESES',
+        '5 a 6 meses',
+        '4 a 5 meses',
+        '3 a 4 meses') THEN 'recencia_3_6_meses'
+        WHEN rango_recencia IN('7 A 9 MESES', '6 a 7 meses', '6 A 7 MESES') THEN 'recencia_6_9_meses'
+        WHEN rango_recencia IN('9 a 10 meses',
+        '10 A 12 MESES') THEN 'recencia_9_12_meses'
+        WHEN NULL THEN 'no_recencia'
+      ELSE
+      'recencia_1_o_mas_anos'
+    END
+      rango_recencia
+    FROM (
+      SELECT
+        id_cliente,
+        rango_recencia,
+        fecha_fin,
+        ROW_NUMBER() OVER (PARTITION BY id_cliente ORDER BY fecha_fin DESC) AS row_num
+      FROM
+        `customer-experience-384423.Data_refinada.Prd_resultado_campanas` ) t
+    WHERE
+      row_num = 1)
+  SELECT
+    id_cliente,
+    MAX(CASE
+        WHEN rango_recencia = 'recencia_1_3_meses' THEN 1
+      ELSE
+      0
+    END
+      ) AS recencia_1_3_meses,
+    MAX(CASE
+        WHEN rango_recencia = 'recencia_3_6_meses' THEN 1
+      ELSE
+      0
+    END
+      ) AS recencia_3_6_meses,
+    MAX(CASE
+        WHEN rango_recencia = 'recencia_6_9_meses' THEN 1
+      ELSE
+      0
+    END
+      ) AS recencia_6_9_meses,
+    MAX(CASE
+        WHEN rango_recencia = 'recencia_9_12_meses' THEN 1
+      ELSE
+      0
+    END
+      ) AS recencia_9_12_meses,
+    MAX(CASE
+        WHEN rango_recencia = 'recencia_1_o_mas_anos' THEN 1
+      ELSE
+      0
+    END
+      ) AS recencia_1_o_mas_anos,
+  FROM
+    temporal
+  GROUP BY
+    1 ),
+  tipo_canal AS(
+  WITH
+    pivotbase AS (
+    SELECT
+      t1.id_cliente id_cliente,
+      t2.canal canal,
+      SUM(ticket) gasto
     FROM
-      `customer-experience-384423.Data_refinada.Prd_resultado_campanas` ) t
-  WHERE
-    row_num = 1)
-SELECT
-  id_cliente,
-  MAX(CASE
-      WHEN rango_recencia = 'recencia_1_3_meses' THEN 1
-    ELSE
-    0
-  END
-    ) AS recencia_1_3_meses,
-  MAX(CASE
-      WHEN rango_recencia = 'recencia_3_6_meses' THEN 1
-    ELSE
-    0
-  END
-    ) AS recencia_3_6_meses,
-  MAX(CASE
-      WHEN rango_recencia = 'recencia_6_9_meses' THEN 1
-    ELSE
-    0
-  END
-    ) AS recencia_6_9_meses,
-  MAX(CASE
-      WHEN rango_recencia = 'recencia_9_12_meses' THEN 1
-    ELSE
-    0
-  END
-    ) AS recencia_9_12_meses,
-  MAX(CASE
-      WHEN rango_recencia = 'recencia_1_o_mas_anos' THEN 1
-    ELSE
-    0
-  END
-    ) AS recencia_1_o_mas_anos,
-FROM
-  temporal
-GROUP BY
-  1
-    )
+      `customer-experience-384423.Data_refinada.prd_mineria_ventas` AS t1
+    LEFT JOIN
+      `customer-experience-384423.Data_refinada.prd_mineria_almacen` AS t2
+    ON
+      t1.id_pdv=t2.id_pvd
+    GROUP BY
+      1,
+      2)
+  SELECT
+    *
+  FROM
+    pivotbase PIVOT(SUM(gasto) FOR canal IN ('FISICA',
+        'ONLINE')))
 SELECT
   t1.*,
   t2.contactable,
@@ -403,7 +424,9 @@ SELECT
   t5.PANALERA,
   t5.DULCES,
   t5.CAMISETA,
-  t5.SET,
+  t5.
+SET
+  ,
   t5.STICKERS,
   t5.PANTALON,
   t5.ACCESORIOS,
@@ -425,34 +448,40 @@ SELECT
   t8.recencia_3_6_meses,
   t8.recencia_6_9_meses,
   t8.recencia_9_12_meses,
-  t8.recencia_1_o_mas_anos
+  t8.recencia_1_o_mas_anos,
+  t9.FISICA gasto_sede_fisica,
+  t9.ONLINE gasto_sede_online
 FROM
   promedio AS t1
-INNER JOIN
+LEFT JOIN
   clientes_contactable AS t2
 ON
   t1.id_cliente =t2.id_cliente
-INNER JOIN
+LEFT JOIN
   puntos_venta AS t3
 ON
   t1.id_cliente =t3.id_cliente
-INNER JOIN
+LEFT JOIN
   ultima_fecha AS t4
 ON
   t1.id_cliente =t4.id_cliente
-INNER JOIN
+LEFT JOIN
   historial_compras AS t5
 ON
   t1.id_cliente =t5.id_cliente
-INNER JOIN
+LEFT JOIN
   historial_zonas AS t6
 ON
   t1.id_cliente =t6.id_cliente
-INNER JOIN
+LEFT JOIN
   historial_compras_periodo AS t7
 ON
   t1.id_cliente =t7.id_cliente
-  inner join
-  historial_recencia as t8
-  on
-  t1.id_cliente=t8.id_cliente 
+LEFT JOIN
+  historial_recencia AS t8
+ON
+  t1.id_cliente=t8.id_cliente
+LEFT JOIN
+  tipo_canal AS t9
+ON
+  t1.id_cliente=t9.id_cliente
