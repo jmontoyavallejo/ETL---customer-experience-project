@@ -12,12 +12,12 @@ END
   CAST(id_pdv AS int64) id_pdv,
   CAST(id_cliente AS int64) id_cliente,
   numero_factura,
-  unidades  unidades,
+  cast(unidades as float64)  unidades,
   porcentaje_descuento,
   precio_full,
   porcentaje_iva  porcentaje_iva,
-  cast(precio_antes_iva as int64)  precio_antes_iva,
-  CAST(REPLACE(precio_con_iva, ',', '') AS float64)  precio_con_iva,
+  precio_antes_iva   precio_antes_iva,
+  precio_con_iva precio_con_iva,
   formas_de_pago,
   CAST(id_referencia AS int64) id_referencia,
   promocion,
@@ -42,6 +42,6 @@ END
   captura_de_datos_celcorreo,
   captura_de_datos_completo,
   rango_ticket,
-  CAST(REPLACE(REPLACE(ticket, ',', ''), 'E+', 'E') AS float64) AS ticket
+  CAST(ticket AS float64) AS ticket
 FROM
   `customer-experience-384423.Data_cruda.mineria_venta`

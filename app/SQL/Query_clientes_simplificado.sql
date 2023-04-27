@@ -170,113 +170,181 @@ WITH
         'SET',
         'STICKERS',
         'PANTALON',
-        'ACCESORIOS')) ),historial_zonas as(SELECT
-  t1.id_cliente,
-  MAX(CASE
-      WHEN t2.zona = 'FRANKY' THEN 1
-    ELSE
-    0
-  END
-    ) AS compro_en_FRANKY,
-  MAX(CASE
-      WHEN t2.zona = 'ZONA 1' THEN 1
-    ELSE
-    0
-  END
-    ) AS compro_en_ZONA_1,
-  MAX(CASE
-      WHEN t2.zona = 'ZONA 2' THEN 1
-    ELSE
-    0
-  END
-    ) AS compro_en_ZONA_2,
-  MAX(CASE
-      WHEN t2.zona = 'ZONA 3' THEN 1
-    ELSE
-    0
-  END
-    ) AS compro_en_ZONA_3,
-  MAX(CASE
-      WHEN t2.zona = 'ZONA 4' THEN 1
-    ELSE
-    0
-  END
-    ) AS compro_en_ZONA_4,
-  MAX(CASE
-      WHEN t2.zona = 'ZONA 5' THEN 1
-    ELSE
-    0
-  END
-    ) AS compro_en_ZONA_5,
-  MAX(CASE
-      WHEN t2.zona = 'ZONA 6' THEN 1
-    ELSE
-    0
-  END
-    ) AS compro_en_ZONA_6,
-  MAX(CASE
-      WHEN t2.zona = 'ZONA 7' THEN 1
-    ELSE
-    0
-  END
-    ) AS compro_en_ZONA_7,
-  MAX(CASE
-      WHEN t2.zona = 'ZONA M' THEN 1
-    ELSE
-    0
-  END
-    ) AS compro_en_ZONA_M,
-  MAX(CASE
-      WHEN t2.zona = 'ECUADOR' THEN 1
-    ELSE
-    0
-  END
-    ) AS compro_en_ECUADOR,
-  MAX(CASE
-      WHEN t2.zona = 'INTERNACIONAL' THEN 1
-    ELSE
-    0
-  END
-    ) AS compro_en_INTERNACIONAL
-FROM
-  `customer-experience-384423.Data_refinada.prd_mineria_ventas` t1
-LEFT JOIN
-  `customer-experience-384423.Data_refinada.prd_mineria_almacen` t2
-ON
-  t1.id_pdv = t2.id_pvd
-GROUP BY
-  t1.id_cliente),historial_compras_periodo as(
-    WITH
-  pivottable AS (
+        'ACCESORIOS')) ),
+  historial_zonas AS(
+  SELECT
+    t1.id_cliente,
+    MAX(CASE
+        WHEN t2.zona = 'FRANKY' THEN 1
+      ELSE
+      0
+    END
+      ) AS compro_en_FRANKY,
+    MAX(CASE
+        WHEN t2.zona = 'ZONA 1' THEN 1
+      ELSE
+      0
+    END
+      ) AS compro_en_ZONA_1,
+    MAX(CASE
+        WHEN t2.zona = 'ZONA 2' THEN 1
+      ELSE
+      0
+    END
+      ) AS compro_en_ZONA_2,
+    MAX(CASE
+        WHEN t2.zona = 'ZONA 3' THEN 1
+      ELSE
+      0
+    END
+      ) AS compro_en_ZONA_3,
+    MAX(CASE
+        WHEN t2.zona = 'ZONA 4' THEN 1
+      ELSE
+      0
+    END
+      ) AS compro_en_ZONA_4,
+    MAX(CASE
+        WHEN t2.zona = 'ZONA 5' THEN 1
+      ELSE
+      0
+    END
+      ) AS compro_en_ZONA_5,
+    MAX(CASE
+        WHEN t2.zona = 'ZONA 6' THEN 1
+      ELSE
+      0
+    END
+      ) AS compro_en_ZONA_6,
+    MAX(CASE
+        WHEN t2.zona = 'ZONA 7' THEN 1
+      ELSE
+      0
+    END
+      ) AS compro_en_ZONA_7,
+    MAX(CASE
+        WHEN t2.zona = 'ZONA M' THEN 1
+      ELSE
+      0
+    END
+      ) AS compro_en_ZONA_M,
+    MAX(CASE
+        WHEN t2.zona = 'ECUADOR' THEN 1
+      ELSE
+      0
+    END
+      ) AS compro_en_ECUADOR,
+    MAX(CASE
+        WHEN t2.zona = 'INTERNACIONAL' THEN 1
+      ELSE
+      0
+    END
+      ) AS compro_en_INTERNACIONAL
+  FROM
+    `customer-experience-384423.Data_refinada.prd_mineria_ventas` t1
+  LEFT JOIN
+    `customer-experience-384423.Data_refinada.prd_mineria_almacen` t2
+  ON
+    t1.id_pdv = t2.id_pvd
+  GROUP BY
+    t1.id_cliente),
+  historial_compras_periodo AS(
   WITH
-    basepivot AS (
+    pivottable AS (
+    WITH
+      basepivot AS (
+      SELECT
+        id_cliente,
+        EXTRACT(YEAR
+        FROM
+          CAST(fecha AS date) ) periodo,
+        SUM(CAST(ticket AS float64)) promedio
+      FROM
+        `customer-experience-384423.Data_refinada.prd_mineria_ventas`
+      GROUP BY
+        1,
+        2 )
+    SELECT
+      *
+    FROM
+      basepivot PIVOT (SUM(promedio) FOR periodo IN(2018,
+          2019,
+          2020,
+          2021)))
+  SELECT
+    id_cliente,
+    _2018 compras_2018,
+    _2019 compras_2019,
+    _2020 compras_2020,
+    _2021 compras_2021,
+  FROM
+    pivottable ),historial_recencia as (
+      WITH
+  temporal AS (
+  SELECT
+    id_cliente,
+    CASE
+      WHEN rango_recencia IN('Menos de 1 mes', '2 a 3 meses', '1 a 2 meses', '1 a 3 meses', '1 A 3 MESES') THEN 'recencia_1_3_meses'
+      WHEN rango_recencia IN('3 a 6 meses',
+      '3 A 6 MESES',
+      '5 a 6 meses',
+      '4 a 5 meses',
+      '3 a 4 meses') THEN 'recencia_3_6_meses'
+      WHEN rango_recencia IN('7 A 9 MESES', '6 a 7 meses', '6 A 7 MESES') THEN 'recencia_6_9_meses'
+      WHEN rango_recencia IN('9 a 10 meses',
+      '10 A 12 MESES') THEN 'recencia_9_12_meses'
+      WHEN NULL THEN 'no_recencia'
+    ELSE
+    'recencia_1_o_mas_anos'
+  END
+    rango_recencia
+  FROM (
     SELECT
       id_cliente,
-      EXTRACT(YEAR
-      FROM
-        CAST(fecha AS date) ) periodo,
-      SUM(CAST(ticket AS float64)) promedio
+      rango_recencia,
+      fecha_fin,
+      ROW_NUMBER() OVER (PARTITION BY id_cliente ORDER BY fecha_fin DESC) AS row_num
     FROM
-      `customer-experience-384423.Data_refinada.prd_mineria_ventas`
-    GROUP BY
-      1,
-      2 )
-  SELECT
-    *
-  FROM
-    basepivot PIVOT (SUM(promedio) FOR periodo IN(2018,
-        2019,
-        2020,
-        2021)))
+      `customer-experience-384423.Data_refinada.Prd_resultado_campanas` ) t
+  WHERE
+    row_num = 1)
 SELECT
   id_cliente,
-  _2018 compras_2018,
-  _2019 compras_2019,
-  _2020 compras_2020,
-  _2021 compras_2021,
+  MAX(CASE
+      WHEN rango_recencia = 'recencia_1_3_meses' THEN 1
+    ELSE
+    0
+  END
+    ) AS recencia_1_3_meses,
+  MAX(CASE
+      WHEN rango_recencia = 'recencia_3_6_meses' THEN 1
+    ELSE
+    0
+  END
+    ) AS recencia_3_6_meses,
+  MAX(CASE
+      WHEN rango_recencia = 'recencia_6_9_meses' THEN 1
+    ELSE
+    0
+  END
+    ) AS recencia_6_9_meses,
+  MAX(CASE
+      WHEN rango_recencia = 'recencia_9_12_meses' THEN 1
+    ELSE
+    0
+  END
+    ) AS recencia_9_12_meses,
+  MAX(CASE
+      WHEN rango_recencia = 'recencia_1_o_mas_anos' THEN 1
+    ELSE
+    0
+  END
+    ) AS recencia_1_o_mas_anos,
 FROM
-  pivottable
-  )
+  temporal
+GROUP BY
+  1
+    )
 SELECT
   t1.*,
   t2.contactable,
@@ -353,6 +421,11 @@ SELECT
   t7.compras_2019,
   t7.compras_2020,
   t7.compras_2021,
+  t8.recencia_1_3_meses,
+  t8.recencia_3_6_meses,
+  t8.recencia_6_9_meses,
+  t8.recencia_9_12_meses,
+  t8.recencia_1_o_mas_anos
 FROM
   promedio AS t1
 INNER JOIN
@@ -379,3 +452,7 @@ INNER JOIN
   historial_compras_periodo AS t7
 ON
   t1.id_cliente =t7.id_cliente
+  inner join
+  historial_recencia as t8
+  on
+  t1.id_cliente=t8.id_cliente 

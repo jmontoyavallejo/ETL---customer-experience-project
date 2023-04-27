@@ -109,8 +109,7 @@ def full_extraction():
     postgresql.close_conection()
 
     df_mineria_ventas_csv=download_csv_from_gcs('customer_experience_bucket', 'mineria_venta.csv','customer experience')
-    df_mineria_resultado_campanas_csv=download_csv_from_gcs('customer_experience_bucket', 'mineria_venta.csv','customer experience')
-    df_mineria_ventas_csv=pd.read_csv('mineria_venta.csv',sep=';',dtype=str)
+    df_mineria_resultado_campanas_csv=download_csv_from_gcs('customer_experience_bucket', 'mineria_resultado_campanas.csv','customer experience')
     old_column_names=df_mineria_ventas_csv.columns.to_list()
     new_column_names=['id_factura',
     'fecha_larga',
@@ -143,40 +142,37 @@ def full_extraction():
     'ticket']
     cambio_cols=dict(zip(old_column_names,new_column_names))
     df_mineria_ventas_csv.rename(columns=cambio_cols,inplace=True)
+    df_mineria_ventas_csv['ticket']=df_mineria_ventas_csv.ticket.astype('int')
 
-
-    df_mineria_resultado_campanas_csv=download_csv_from_gcs('customer_experience_bucket', 'mineria_venta.csv','customer experience')
     old_column_names=df_mineria_resultado_campanas_csv.columns.to_list()
-    new_column_names=['id_factura',
-    'fecha_larga',
-    'id_pdv',
-    'id_cliente',
-    'numero_factura',
-    'unidades',
-    'porcentaje_descuento',
-    'precio_full',
-    'porcentaje_iva',
-    'precio_antes_iva',
-    'precio_con_iva',
-    'formas_de_pago',
-    'id_referencia',
-    'promocion',
-    'habeas_data_venta',
-    'valor_descuento',
-    'costo_total',
-    'costo_unitario',
-    'id_vendedor',
-    'estado_id_venta',
-    'estado_celular_venta',
-    'estado_email_venta',
-    'fecha',
-    'consecutivo_trx',
-    'captura_de_datos_cel',
-    'captura_de_datos_cel_correo',
-    'captura_de_datos_completo',
-    'rango_ticket',
-    'ticket',
-    ]
+    new_column_names=['id_cliente',
+    'key_movimiento',
+    'codigo_campana',
+    'codigo_campana_master',
+    'estado',
+    'nombre_campana',
+    'fecha_inicio',
+    'fecha_fin',
+    'campo_fecha',
+    'variable_1',
+    'detalle_variable_1',
+    'filtro_general_1',
+    'variable_2',
+    'detalle_variable_2',
+    'filtro_general_2',
+    'variable_3',
+    'detalle_variable_3',
+    'filtro_general_3',
+    'copy',
+    'cliente_contactado',
+    'tipo_contacto',
+    'rango_compra_historica',
+    'rango_recencia',
+    'rfm',
+    'rfm_segmento',
+    'campana_efectiva_tipo',
+    'mantener_campana']
+        
     cambio_cols=dict(zip(old_column_names,new_column_names))
     df_mineria_resultado_campanas_csv.rename(columns=cambio_cols,inplace=True)
     
@@ -198,5 +194,4 @@ def full_extraction():
     pandas_gbq.to_gbq(df_mineria_resultado_campanas_csv.astype('string'), table_id_mineria_resultado_campanas_csv, project_id=project_id, if_exists='replace')
     pandas_gbq.to_gbq(df_mineria_producto.astype('string'), table_id_mineria_producto, project_id=project_id, if_exists='replace')
     pandas_gbq.to_gbq(df_mineria_almacen.astype('string'), table_id_mineria_almacen, project_id=project_id, if_exists='replace')
-
 
